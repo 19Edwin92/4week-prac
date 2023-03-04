@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from 'react'
 
 const hardCalurate = (number) => {
-  console.log('어려운 계산기');
+  console.log('답답한 계산기');
   for (let i=0; i<500000000; i++) {} // 단순하게 반복문이 5억번 실행될 때까지 기다리는 시간이라고 하자. 
   return number+10000
 }
 
-
 const easyCalurate = (number) => {
-  console.log('짱쉬운 계산기');
+  console.log('빠른 계산기');
   return number+1
 }
 
@@ -23,7 +22,7 @@ function Usememo1() {
   const easySum = easyCalurate(easyNumber)
   return (
     <div>
-      <h3>어려운 계산기</h3>
+      <h3>답답한 계산기</h3>
       <input 
           type="number"
           value={hardNumber}
@@ -31,7 +30,7 @@ function Usememo1() {
           step="1"/>
       <span>+10000 = {hardSum}</span>
       <hr />
-      <h3>짱쉬운 계산기</h3>
+      <h3>빠른 계산기</h3>
       <input 
           type="number"
           value={easyNumber}

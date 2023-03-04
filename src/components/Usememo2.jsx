@@ -14,7 +14,7 @@ function Usememo2() {
     };
   },[isKorea])
 
-  
+  console.log(number,location )
   useEffect(()=>{
     console.log('useEffect 호출')
   },[location])
