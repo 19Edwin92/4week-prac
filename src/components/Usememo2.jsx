@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 function Usememo2() {
   const [number, setNumber] = useState(0);
   const [isKorea, setIsKorea] = useState(true);
 
-  const location = isKorea ? "한국" : "외국";
-  // useEffect 동작하지 않아서 이를 먼저 공부하고 오자. 
+  // 불변성이 유지될 때의 경우
+  // const location = isKorea ? "한국" : "외국";
+
+  // 불변성이 유지되지 않을 때의 경우
+  const location = useMemo(()=>{
+    return   {
+      country : isKorea ? "한국" : "외국",
+    };
+  },[isKorea])
+
+  
   useEffect(()=>{
     console.log('useEffect 호출')
   },[location])
@@ -21,7 +30,7 @@ function Usememo2() {
           onChange={(e)=> setNumber(Number(e.target.value))}/>
       <hr />
       <h2>어느 나라에 있어요</h2>
-      <p>나라 : {location}</p>
+      <p>나라 : {location.country}</p>
       <button 
           onClick={()=>{setIsKorea(!isKorea)}}
           >비행기를 타자</button>
