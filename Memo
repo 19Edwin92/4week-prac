@@ -1,0 +1,54 @@
+컴포넌트 최적화에 대해서 말해봅시다. 
+# ReactMemo - 별도의 추가적인 import 없이 사용하는 - Components 의 Memoization 과 관련
+# useMeno - 추가적으로 import 해야 사용가능 - value 의 Memoization 과 관련
+
+여기서 말하는, Memoization - 동일한 값을 반환해야 할 때, 메모리에서 저장해서 가져온다는 것입니다. 
+# 또한 함수형 컴포넌트에에 대해서 이해되어야 하는데, 
+# 함수형 컴포넌트는 함수라는 사실이다. 즉 렌더링 되어서 호출되면, 그 값이 초기화 된다는 사실이다. 
+
+  function Component() {
+    const value = calurate();
+    return <div> {value}</div>
+  }
+
+  const calurate = () => {
+    return 10
+  }
+
+위와 같은 함수가 있다고 할 때, Component() 는 반복적으로  calurate()가 계산하는 value를 반환받아, 화면에 표시를 할 것이다. 
+그런데 만약 calurate()가 무거운 함수라면, 리렌더링 시에 10을 반환받는 것은 무리가 발생될 것이다. 바로 이럴 때 useMemo 를 사용할 수 있게 되는 상황이 발생되는 것이다. 
+
+# useMeno
+calurate()가 만약 무거운 함수인데, 처음에 한 번만 실행되면 된다고 가정할 때, 해당 값을 캐쉬에 보관해 두었다가, 이를 쉽게 가져와서 반복해서 사용한다는 개념입니다. 
+
+## useMeno 구조, 2개의 매개변수 : 콜백함수, [의존성배열-초기값], useMeno의 조건이 기록됩니다. 변경되지 않으면 그 값을 그대로 사용합니다. 
+  const value = useMeno(()=> {},[]) 
+
+  const value = useMeno(()=> {
+    return calurate()
+  ; },[item])
+
+의존성배열이 변경될 때에만 사용합니다. 만약 빈배열이면 처음에만 계산하고 이후에 해당 컴포넌트가 사라지기 전까지 반복한다는 것입니다. 
+그런데 이는 별도의 메모리를 사용한다는 점에서 성능을 무겁게 사용하기에, 많은 내용을 사용하는 것이 아니라 필요한 것만 사용하셔야 됩니다. 
+# components > UseMemo.jsx 파일을 살펴보자. 
+1) 컴포넌트를 살펴보면, 어려운 계산기
+
+#     const hardCalurate = (number) => {
+        console.log('어려운 계산기');
+        for (let i=0; i<500000000; i++) {} // 단순하게 반복문이 5억번 실행될 때까지 기다리는 시간이라고 하자. 
+        return number+10000
+      }
+2) 컴포넌트를 살펴보면, 짱쉬운 계산기
+
+#     const easyCalurate = (number) => {
+        console.log('짱쉬운 계산기');
+        return number+1
+     }
+
+hardCalurate는 말그대로 무거운 함수이다. 계산을 할 때 의미없는 5억번의 생각을 수행하고 결과를 반환해 준다. 
+easyCalurate는 반면에 가벼운 계산기이다. 생각할 시간 없이 바로 결과를 반환해 주도록 생성했다. 
+그리고 결과를 보면... 두 개다 5만번의 생각이 수행된 다음에 실행되는 것을 볼 수 있다. 왜냐하면, easyCalurate를 실행했어도,
+옆에 있던 hardCalurate가 자신의 것을 반환하기 위해서 5만번의 생각을 또 했기 때문이다.. 핵 답답한 친구이다. 
+# 이는 컴포넌트의 특징 때문인데, easyCalurate의 결과로 easySum 변경되었기에, 리렌더링되기 때문입니다. 이럴 때 useMemo를 실행합니다. 
+
+
